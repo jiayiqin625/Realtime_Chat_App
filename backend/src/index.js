@@ -9,6 +9,7 @@ import { clerkMiddleware } from "@clerk/express";
 
 import { connectDB } from "./config/db.js";
 //import { Routes } from "./routes/Routes.js";
+import job from "./lib/cron.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
