@@ -47,8 +47,7 @@ const startServer = async () => {
       job.start();
     }
   } catch (error) {
-    console.log("Server failed to load", error);
-    server.close(() => process.exit(1));
+    console.error("Database connection failed", error);
   }
 };
 
