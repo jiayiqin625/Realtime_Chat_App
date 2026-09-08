@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
 app.use(express.json());
-app.use(cors({ orgin: "http://localhost:5237", credentials: true }));
+app.use(cors({ orgin: process.env.FRONTEND_URL, credentials: true }));
 app.use(clerkMiddleware);
 
 if (fs.existsSync(publicDir)) {
@@ -36,6 +36,10 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log("Database Connected, Server is Online.");
     });
+
+    if (process.env.NODE_ENV === "production") {
+      job.start();
+    }
   } catch (error) {
     console.log("Server failed to load", error);
     process.exit(1);
