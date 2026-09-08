@@ -35,19 +35,20 @@ if (fs.existsSync(publicDir)) {
 //app.use("api/", Routes);
 
 const startServer = async () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is listening on port ${PORT}`);
+  });
+
   try {
     await connectDB();
-
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log("Database Connected, Server is Online.");
-    });
+    console.log("Database Connected, Server is Online.");
 
     if (process.env.NODE_ENV === "production") {
       job.start();
     }
   } catch (error) {
     console.log("Server failed to load", error);
-    process.exit(1);
+    server.close(() => process.exit(1));
   }
 };
 
