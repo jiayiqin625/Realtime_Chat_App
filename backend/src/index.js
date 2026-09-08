@@ -5,7 +5,7 @@ import cors from "cors";
 import path from "path";
 import fs from "fs";
 
-//import { clerkMiddleware } from "@clerk/express";
+import { clerkMiddleware } from "@clerk/express";
 
 import { connectDB } from "./config/db.js";
 //import { Routes } from "./routes/Routes.js";
@@ -18,7 +18,7 @@ const publicDir = path.join(process.cwd(), "public");
 
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-//app.use(clerkMiddleware);
+app.use(clerkMiddleware());
 
 app.get("/health", (req, res) => {
   res.status(200).json({ ok: true });
