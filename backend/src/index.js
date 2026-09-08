@@ -2,6 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
+import path from "path";
+import fs from "fs";
+
 import { clerkMiddleware } from "@clerk/express";
 
 import { connectDB } from "./config/db.js";
@@ -10,9 +13,19 @@ import { connectDB } from "./config/db.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const publicDir = path.join(process.cwd(), "public");
+
 app.use(express.json());
 app.use(cors({ orgin: "http://localhost:5237", credentials: true }));
 app.use(clerkMiddleware);
+
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+
+  app.get("/{*any}", (req, res, next) => {
+    res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
+  });
+}
 
 //app.use("api/", Routes);
 
