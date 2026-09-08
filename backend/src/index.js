@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
 app.use(express.json());
-app.use(cors({ orgin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(clerkMiddleware);
 
 app.get("/health", (req, res) => {
