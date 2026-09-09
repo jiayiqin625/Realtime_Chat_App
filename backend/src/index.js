@@ -12,8 +12,8 @@ import job from "./lib/cron.js";
 import clerkWebhook from "./webhooks/clerk.webhook.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import { app, server } from "./lib/socket.js";
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
@@ -47,7 +47,7 @@ const startServer = async () => {
     await connectDB();
     console.log("Database Connected Successfully.");
 
-    app.listen(PORT, "0.0.0.0", () => {
+    server.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is listening on port ${PORT}`);
     });
 
