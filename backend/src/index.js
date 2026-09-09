@@ -8,13 +8,19 @@ import fs from "fs";
 import { clerkMiddleware } from "@clerk/express";
 
 import { connectDB } from "./config/db.js";
-//import { Routes } from "./routes/Routes.js";
 import job from "./lib/cron.js";
+import clerkWebhook from "./webhooks/clerk.webhook.js";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
+const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
+
+app.use(
+  "/api/webhook/clerk",
+  express.raw({ type: "application/json" }),
+  clerkWebhook,
+);
 
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
