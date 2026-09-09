@@ -26,10 +26,10 @@ export const clerkController = async (req, res) => {
 
       const email =
         u.email_addresses?.find((e) => e.id === u.primary_email_address_id)
-          ?.email_address ?? u.emailaddress?.[0]?.email_address;
+          ?.email_address ?? u.email_address?.[0]?.email_address;
 
       const fullName =
-        [u.first_name, u.last_name].filter(boolean).join(" ") ||
+        [u.first_name, u.last_name].filter(Boolean).join(" ") ||
         u.username ||
         email?.split("@")[0];
 
@@ -42,9 +42,9 @@ export const clerkController = async (req, res) => {
 
     if (evt.type === "user.deleted") {
       if (evt.data.id) await User.findOneAndDelete({ clerkId: evt.data.id });
-
-      res.status(200).json({ received: true });
     }
+
+    res.status(200).json({ received: true });
   } catch (error) {
     console.error("Error in Clerk webhook", error);
     res.status(400).json({ message: "Webhook verification failed" });
