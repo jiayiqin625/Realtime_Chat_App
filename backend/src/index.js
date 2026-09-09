@@ -1,18 +1,18 @@
 import "dotenv/config";
-import express from "express";
-import cors from "cors";
 
 import path from "path";
 import fs from "fs";
 
+import express from "express";
+import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 
 import { connectDB } from "./config/db.js";
 import job from "./lib/cron.js";
 import clerkWebhook from "./webhooks/clerk.webhook.js";
+import authRoutes from "./routes/auth.route.js";
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
@@ -30,6 +30,8 @@ app.get("/health", (req, res) => {
   res.status(200).json({ ok: true });
 });
 
+app.use("/api/auth", authRoutes);
+
 if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir));
 
@@ -37,8 +39,6 @@ if (fs.existsSync(publicDir)) {
     res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
   });
 }
-
-//app.use("api/", Routes);
 
 const startServer = async () => {
   try {
