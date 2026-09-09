@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
 app.use(
-  "/api/webhook/clerk",
+  "/api/webhooks/clerk",
   express.raw({ type: "application/json" }),
   clerkWebhook,
 );
