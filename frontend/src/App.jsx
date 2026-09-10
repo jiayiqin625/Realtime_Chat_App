@@ -23,7 +23,7 @@ function App() {
           />
           <Route
             path="/auth"
-            element={!isSignedIn ? <AuthPage /> : <Navigate to={"/chat"} />}
+            element={!isSignedIn ? <AuthPage /> : <Navigate to={"/"} />}
           />
         </Routes>
       </WallpaperProvider>
