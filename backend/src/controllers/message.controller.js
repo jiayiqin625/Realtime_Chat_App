@@ -1,5 +1,5 @@
 import { hasImageKitConfig, uploadChatMedia } from "../lib/imagekit.js";
-import { getReceiverSocketId } from "../lib/socket.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../model/message.model.js";
 import User from "../model/user.model.js";
 
@@ -92,14 +92,14 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
   try {
     const { text } = req.body;
-    const { id: receiverId } = req.paras;
+    const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
     let imageUrl;
     let videoUrl;
 
     if (req.file) {
-      if (!hasImageKitConfig) {
+      if (!hasImageKitConfig()) {
         return res
           .status(500)
           .json({ message: "Media upload is not configured" });
@@ -128,6 +128,7 @@ export const sendMessage = async (req, res) => {
     }
 
     res.status(201).json(newMessage);
+    return true;
   } catch (error) {
     console.error("Error in sendMessage", error.message);
     res.status(500).json({ message: "Internal Server Error" });
