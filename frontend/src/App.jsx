@@ -9,7 +9,7 @@ import { useAuth } from "@clerk/react";
 function App() {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return <p>loading</p>;
+  if (!isLoaded) return <PageLoader />;
 
   return (
     <ThemeProvider>
