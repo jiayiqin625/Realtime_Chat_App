@@ -1,7 +1,7 @@
 import "dotenv/config";
 
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 
 import express from "express";
 import cors from "cors";
@@ -14,7 +14,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
 
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env["PORT"]) || 5000;
 const publicDir = path.join(process.cwd(), "public");
 
 app.use(
@@ -24,10 +24,10 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: process.env["FRONTEND_URL"], credentials: true }));
 app.use(clerkMiddleware());
 
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true });
 });
 
@@ -37,12 +37,12 @@ app.use("/api/messages", messageRoutes);
 if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir));
 
-  app.get("/{*any}", (req, res, next) => {
+  app.get("/{*any}", (_req, res, next) => {
     res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
   });
 }
 
-const startServer = async () => {
+const startServer = async (): Promise<void> => {
   try {
     await connectDB();
     console.log("Database Connected Successfully.");
