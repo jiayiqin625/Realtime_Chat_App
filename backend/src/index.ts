@@ -51,7 +51,7 @@ const startServer = async () => {
       console.log(`Server is listening on port ${PORT}`);
     });
 
-    if (process.env.NODE_ENV === "production") {
+    if (process.env["NODE_ENV"] === "production") {
       job.start();
     }
   } catch (error) {
