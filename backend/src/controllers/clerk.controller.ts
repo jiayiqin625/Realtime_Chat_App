@@ -1,9 +1,10 @@
 import User from "../model/user.model.js";
 import { verifyWebhook } from "@clerk/backend/webhooks";
+import type { RequestHandler } from "express";
 
-export const clerkController = async (req, res) => {
+export const clerkController: RequestHandler = async (req, res) => {
   try {
-    const signingSecret = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
+    const signingSecret = process.env["CLERK_WEBHOOK_SIGNING_SECRET"];
 
     if (!signingSecret) {
       res.status(503).json({ message: "Webhook secret is not provided" });
@@ -15,7 +16,7 @@ export const clerkController = async (req, res) => {
       : String(req.body);
     const request = new Request("http://internal/webhooks/clerk", {
       method: "POST",
-      headers: new Headers(req.headers),
+      headers: new Headers(req.headers as any),
       body: payload,
     });
 
@@ -41,7 +42,9 @@ export const clerkController = async (req, res) => {
     }
 
     if (evt.type === "user.deleted") {
-      if (evt.data.id) await User.findOneAndDelete({ clerkId: evt.data.id });
+      if (evt.data.id) {
+        await User.findOneAndDelete({ clerkId: evt.data.id });
+      }
     }
 
     res.status(200).json({ received: true });
