@@ -1,7 +1,8 @@
 import { getAuth } from "@clerk/express";
 import User from "../model/user.model.js";
+import type { RequestHandler } from "express";
 
-export const protectRoute = async (req, res, next) => {
+export const protectRoute: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = getAuth(req);
 
@@ -21,7 +22,9 @@ export const protectRoute = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Error in protectRoute middleware: ", error.message);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("Error in protectRoute middleware:", errorMessage);
     res.status(500).json({ message: "Internal server error" });
   }
 };
