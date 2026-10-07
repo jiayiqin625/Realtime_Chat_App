@@ -92,7 +92,7 @@ export const getMessages: RequestHandler = async (req, res) => {
     const messages = await Message.find({
       $or: [
         { senderId: myUserId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: myId },
+        { senderId: userToChatId, receiverId: myUserId },
       ],
     }).sort({ createdAt: 1 });
 
