@@ -2,8 +2,10 @@ import { hasImageKitConfig, uploadChatMedia } from "../lib/imagekit.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../model/message.model.js";
 import User from "../model/user.model.js";
+import type { RequestHandler } from "express";
+import { Types } from "mongoose";
 
-export const getUsersForSidebar = async (req, res) => {
+export const getUsersForSidebar: RequestHandler = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
 
@@ -13,12 +15,14 @@ export const getUsersForSidebar = async (req, res) => {
 
     res.status(200).json(filteredUsers);
   } catch (error) {
-    console.error("Error in getUsersForSidebar", error.message);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("Error in getUsersForSidebar", errorMessage);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const getConversationsForSidebar = async (req, res) => {
+export const getConversationsForSidebar: RequestHandler = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
 
@@ -65,31 +69,43 @@ export const getConversationsForSidebar = async (req, res) => {
 
     res.status(200).json(conversations);
   } catch (error) {
-    console.error("Error in getConversationsForSidebar", error.message);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error("Error in getConversationsForSidebar", errorMessage);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const getMessages = async (req, res) => {
+export const getMessages: RequestHandler = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
+    const { id: userToChat } = req.params;
     const myId = req.user._id;
+
+    if (!userToChat || typeof userToChat !== "string") {
+      res.status(400).json({ message: "Invalid or missing userId" });
+      return;
+    }
+
+    const userToChatId = new Types.ObjectId(userToChat);
+    const myUserId = new Types.ObjectId(myId);
 
     const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChatId },
+        { senderId: myUserId, receiverId: userToChatId },
         { senderId: userToChatId, receiverId: myId },
       ],
     }).sort({ createdAt: 1 });
 
     res.status(200).json(messages);
   } catch (error) {
-    console.error("Error in getMessages", error.message);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error("Error in getMessages", errorMessage);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const sendMessage = async (req, res) => {
+export const sendMessage: RequestHandler = async (req, res) => {
   try {
     const { text } = req.body;
     const { id: receiverId } = req.params;
@@ -128,9 +144,12 @@ export const sendMessage = async (req, res) => {
     }
 
     res.status(201).json(newMessage);
-    return true;
+    return;
   } catch (error) {
-    console.error("Error in sendMessage", error.message);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error("Error in sendMessage", errorMessage);
     res.status(500).json({ message: "Internal Server Error" });
+    return;
   }
 };
