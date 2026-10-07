@@ -24,7 +24,7 @@ export const getUsersForSidebar: RequestHandler = async (req, res) => {
 
 export const getConversationsForSidebar: RequestHandler = async (req, res) => {
   try {
-    const loggedInUserId = req.user._id;
+    const loggedInUserId = new Types.ObjectId(req.user._id);
 
     const conversations = await Message.aggregate([
       {
@@ -76,15 +76,10 @@ export const getConversationsForSidebar: RequestHandler = async (req, res) => {
   }
 };
 
-export const getMessages: RequestHandler = async (req, res) => {
+export const getMessages: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id: userToChat } = req.params;
     const myId = req.user._id;
-
-    if (!userToChat || typeof userToChat !== "string") {
-      res.status(400).json({ message: "Invalid or missing userId" });
-      return;
-    }
 
     const userToChatId = new Types.ObjectId(userToChat);
     const myUserId = new Types.ObjectId(myId);
@@ -105,7 +100,7 @@ export const getMessages: RequestHandler = async (req, res) => {
   }
 };
 
-export const sendMessage: RequestHandler = async (req, res) => {
+export const sendMessage: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { text } = req.body;
     const { id: receiverId } = req.params;
@@ -129,8 +124,8 @@ export const sendMessage: RequestHandler = async (req, res) => {
       }
     }
     const newMessage = new Message({
-      senderId,
-      receiverId,
+      senderId: new Types.ObjectId(senderId),
+      receiverId: new Types.ObjectId(receiverId),
       text,
       image: imageUrl,
       video: videoUrl,
